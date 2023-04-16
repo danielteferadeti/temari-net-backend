@@ -2,10 +2,10 @@ import { Request, Response } from 'express';
 import { Document } from 'mongoose';
 import Issue, { IIssue, issueValidation } from '../models/issue';
 
-export const getIssues = async (req: Request, res: Response): Promise<void> => {
+export const getAllIssues = async (req: Request, res: Response): Promise<void> => {
     try {
         const issues: Document<IIssue>[] = await Issue.find();
-        res.json(issues);
+        res.status(201).json(issues);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -14,8 +14,8 @@ export const getIssues = async (req: Request, res: Response): Promise<void> => {
 
 export const createIssue = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { userId, classId, title, description, attachments, tags } = req.body;
-        const validatedIssue = await issueValidation.validateAsync({ userId, classId, title, description, attachments, tags });
+        const { userId, classId, title, description, archives, tags } = req.body;
+        const validatedIssue = await issueValidation.validateAsync({ userId, classId, title, description, archives, tags });
 
         const issue: Document<IIssue> = await Issue.create({
             ...validatedIssue
@@ -28,8 +28,8 @@ export const createIssue = async (req: Request, res: Response): Promise<void> =>
 };
 
 export const getIssueById = async (req: Request, res: Response): Promise<void> => {
-    const { id } = req.params;
     try {
+        const { id } = req.params;
         const issue: Document<IIssue> | null = await Issue.findById(id);
         if (!issue) {
             res.status(404).json({ error: 'Issue not found' });
@@ -45,8 +45,8 @@ export const getIssueById = async (req: Request, res: Response): Promise<void> =
 export const updateIssueById = async (req: Request, res: Response): Promise<void> => {
     try {
         const { id } = req.params;
-        const { userId, classId, title, description, attachments, tags } = req.body;
-        const validatedIssue = await issueValidation.validateAsync({ userId, classId, title, description, attachments, tags });
+        const { userId, classId, title, description, archives, tags } = req.body;
+        const validatedIssue = await issueValidation.validateAsync({ userId, classId, title, description, archives, tags });
 
         const updatedIssue: Document<IIssue> | null = await Issue.findByIdAndUpdate(
             id,
@@ -78,3 +78,8 @@ export const deleteIssueById = async (req: Request, res: Response): Promise<void
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
+const issueControllers = {
+    getAllIssues, getIssueById, createIssue, updateIssueById, deleteIssueById
+}
+export default issueControllers;

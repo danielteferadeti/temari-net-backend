@@ -6,7 +6,7 @@ export interface IIssue extends Document {
     classId: Schema.Types.ObjectId
     title: string
     description: string
-    attachments: [Schema.Types.ObjectId]
+    archives: [Schema.Types.ObjectId]
     tags: [string]
     createdAt: Date
     updatedAt: Date
@@ -30,7 +30,7 @@ const IssueSchema: Schema<IIssue> = new Schema({
         type: String,
         required: [true, "Description is required."]
     },
-    attachments: {
+    archives: {
         type: [Schema.Types.ObjectId],
         ref: 'File',
         default: null,
@@ -45,11 +45,7 @@ const IssueSchema: Schema<IIssue> = new Schema({
         timestamps: {
             createdAt: 'createdAt',
             updatedAt: 'updatedAt'
-        },
-        populate: {
-            path: 'attachements',
-            model: 'File'
-        },
+        }
     })
 
 
@@ -66,7 +62,7 @@ export const issueValidation = Joi.object<IIssue>({
     description: Joi.string().required().messages({
       'any.required': 'Description is required.',
     }),
-    attachments: Joi.array().items(objectId),
+    archives: Joi.array().items(objectId),
     tags: Joi.array().items(Joi.string()),
 })
 
