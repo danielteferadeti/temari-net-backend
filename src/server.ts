@@ -9,7 +9,7 @@ mongoose
     console.log("Connected to mongodb...");
     app.listen(configs.PORT, () => {
       return console.log(
-        `Express is listening at http://localhost:${configs.PORT}`
+        `Express is listening at http://localhost/api/v1:${configs.PORT}`
       );
     });
   })
