@@ -43,16 +43,6 @@ export default async function multipleUpload (req:FileRequest, res:Response, nex
           req.body.avatar = avatar
       }
 
-      if (archiveFiles.logo && !archiveFiles.logo.length){
-        const logo = await upload(req,res,next,archiveFiles.logo,isValidFormat)
-        req.body.logo = logo
-      }
-
-      if (archiveFiles.countryFlag && !archiveFiles.countryFlag.length){
-        const countryFlag = await upload(req,res,next,archiveFiles.countryFlag,isValidFormat)
-        req.body.countryFlag = countryFlag
-      }
-
       req.body.archives = multipleArchivePromise
       next()
       return
