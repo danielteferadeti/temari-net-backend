@@ -30,7 +30,7 @@ export const getVoteById = async (req: Request, res: Response): Promise<void> =>
         }
 
     } catch (e) {
-        res.status(500).end()
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 }
 

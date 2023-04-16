@@ -20,7 +20,7 @@ export const createIssue = async (req: Request, res: Response): Promise<void> =>
         const issue: Document<IIssue> = await Issue.create({
             ...validatedIssue
         });
-        res.json(issue);
+        res.status(201).json(issue);
     } catch (err) {
         console.error(err);
         res.status(400).json({ error: err.message });

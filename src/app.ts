@@ -21,6 +21,9 @@ app.use(cors());
 
 app.use("/api/v1/user", routes.userRouter);
 app.use("/api/v1/issue", routes.issueRouter);
+app.use("/api/v1/vote", routes.voteRouter);
+app.use("/api/v1/answer", routes.answerRouter);
+
 app.get("/", (req, res) => {
   return res.send("Welcome to a2sv.org Page!");
 });
