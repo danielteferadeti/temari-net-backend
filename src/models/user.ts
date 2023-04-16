@@ -64,13 +64,17 @@ const UserSchema: Schema<IUserDocument, UserModel> = new Schema(
     resetToken: {
       type: String,
       default: ""
-    }
+    },
   },
   {
     timestamps: {
       createdAt: 'createdAt',
       updatedAt: 'updatedAt'
-    }
+    },
+    populate: {
+      path: 'avatar',
+      model: 'File'
+    },
   }
 )
 

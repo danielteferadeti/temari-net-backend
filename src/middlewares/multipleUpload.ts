@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import DataURIParser from 'datauri/parser';
 import { upload } from '../services/upload';
 
-const imageFormats = [".jpg", ".jpeg", ".png", "jpg", "jpeg", "png", "octet-stream", "pdf", "csv", "doc"]
+const imageFormats = [".jpg", ".jpeg", ".png", "jpg", "jpeg", "png", "octet-stream", "pdf", "csv", "doc", "xml", "html"]
 interface FileRequest extends Request{
   files: any;
 }
@@ -25,16 +25,16 @@ export default async function multipleUpload (req:FileRequest, res:Response, nex
         return next()
       }
       
-      let multiplePicturePromise = []
+      let multipleArchivePromise = []
       const parser = new DataURIParser()
-      for (let i=0; archiveFiles.images && i<archiveFiles.images.length; i++){
-          const image = await upload(req,res,next,archiveFiles.images[i],isValidFormat)
-          multiplePicturePromise.push(image)
+      for (let i=0; archiveFiles.archives && i<archiveFiles.archives.length; i++){
+          const archive = await upload(req,res,next,archiveFiles.archives[i],isValidFormat)
+          multipleArchivePromise.push(archive)
       }
      
-      if (archiveFiles.images && !archiveFiles.images.length){
-          const image = await upload(req,res,next,archiveFiles.images,isValidFormat)
-          multiplePicturePromise.push(image)
+      if (archiveFiles.archives && !archiveFiles.archives.length){
+          const archive = await upload(req,res,next,archiveFiles.archives,isValidFormat)
+          multipleArchivePromise.push(archive)
       }
 
       //If there is avatar sent add the avatar to body
@@ -53,7 +53,7 @@ export default async function multipleUpload (req:FileRequest, res:Response, nex
         req.body.countryFlag = countryFlag
       }
 
-      req.body.photos = multiplePicturePromise
+      req.body.archives = multipleArchivePromise
       next()
       return
     } catch (err) {
