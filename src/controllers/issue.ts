@@ -3,7 +3,7 @@ import Issue, { IIssue, issueValidation } from '../models/issue';
 
 export const getAllIssues = async (req: Request, res: Response): Promise<void> => {
     try {
-        const issues: IIssue[] = await Issue.find().populate("user");
+        const issues: IIssue[] = await Issue.find().populate([{path: 'userId'}, {path: "classId"}]).exec();
         res.status(200).json({message: "Issues retrieved successfully", data: issues});
     } catch (error) {
         res.status(500).json({ error: error.message, message: 'Internal Server Error' });
@@ -30,7 +30,7 @@ export const createIssue = async (req: Request, res: Response): Promise<void> =>
 export const getIssueById = async (req: Request, res: Response): Promise<void> => {
     try {
         const { id } = req.params;
-        const issue = await Issue.findById(id).populate({path: 'user'}).exec();
+        const issue = await Issue.findById(id).populate([{path: 'userId'}, {path: "classId"}]).exec();
         if (!issue) {
             res.status(404).json({ error: 'Issue not found', message: 'An Issue with the given Id doesn\'t exists'});
         } else {
