@@ -67,7 +67,7 @@ const userSignup = async (req, res) => {
 
     //if user found return error
     if (userByEmail) {
-      return res.status(400).json({ errors: "That email is already registered", message: "Must provide unique email" }).end();
+      return res.status(400).json({ error: "That email is already registered", message: "Must provide unique email" }).end();
     }
 
     //check if user exists with username
@@ -75,7 +75,7 @@ const userSignup = async (req, res) => {
 
     //if user found return error
     if (userByUserName) {
-      return res.status(400).json({ errors: "That user Name is already registered", message: "Must provide unique userName" }).end();
+      return res.status(400).json({ error: "That user Name is already registered", message: "Must provide unique userName" }).end();
     }
 
     const new_user = await User.create({...validatedUser});
@@ -106,7 +106,7 @@ const verifyUserAndOtp = async ({ email, otp }) => {
   
       //if there is no email or otp provided return error
       if (!email || !otp) {
-        return {isValid: false , errors: "Empty user details is not allowed!" }
+        return {isValid: false , error: "Empty user details is not allowed!" }
       } else {
         //#Verify the OTP
         const otpVerificationRecord = await Otp.find({ email });
@@ -122,7 +122,7 @@ const verifyUserAndOtp = async ({ email, otp }) => {
           //if otp has expired return OTP expired error
           if (expiresAt.getTime() < Date.now()) {
             // await Otp.deleteMany({email});
-            return {isValid: false, errors: "Verification code has expired. Please request again." }
+            return {isValid: false, error: "Verification code has expired. Please request again." }
           } else {
   
             // If everything is okay compare the otp to saved one
@@ -130,19 +130,19 @@ const verifyUserAndOtp = async ({ email, otp }) => {
   
             if (!validOTP) {
               // if different otp is sent return error
-              return {isValid: false, errors: "Invalid code passed. Please check your inbox again." }
+              return {isValid: false, error: "Invalid code passed. Please check your inbox again." }
             } else {
   
               //if OTP is valid then return true and delete the otp record
               await Otp.deleteMany({ email });
               //return true to end the execution of code
-              return {isValid: true, errors: "" };
+              return {isValid: true, error: "" };
             }
           }
         }
       }
     } catch (error) {
-      return {isValid: false, errors: "Server error." }
+      return {isValid: false, error: "Server error." }
     }
   }
 
@@ -371,11 +371,11 @@ const currentUser = (req: Request, res:Response) => {
     }
     jwt.verify(token, jwtSecret, async (err, decodedToken) => {
       if (err) {
-        return res.status(400).json({ error: {message: "User not authenticated. The token sent is bad or expired."}}).end();
+        return res.status(400).json({ error: "User should be authenticated", message: "User not authenticated. The token sent is bad or expired."}).end();
       } else {
         let user = await User.findById(decodedToken.id._id);
         if(!user){
-          return res.status(400).json({ error: {message: "User not authenticated or token sent is bad or expired."}}).end();
+          return res.status(400).json({ error: "User should be authenticated",  message: "User not authenticated or token sent is bad or expired." }).end();
         }
 
         return res.status(200).json({

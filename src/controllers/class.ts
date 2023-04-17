@@ -3,6 +3,9 @@ import { Request, Response } from 'express'
 import Class, { IClass, classValidation } from '../models/class'
 import User, { userValidation } from '../models/user'
 import ClassMember, { classMemberValidation } from '../models/classmember'
+import Event, { eventValidation } from '../models/event'
+import Announcement, { announcementValidation } from '../models/announcement'
+
 
 const createClass = async (req, res) => {
     try {
@@ -91,7 +94,7 @@ const addClassMember = async (req, res) => {
           }).end();
       }
 
-      return res.status(400).json({ errors: "No member to add", message: "Make sure to send user names you would like to add to the class." }).end();
+      return res.status(400).json({ error: "No member to add", message: "Make sure to send user names you would like to add to the class." }).end();
     }
     catch (err) {
       if (err.isJoi === true) {
@@ -101,10 +104,15 @@ const addClassMember = async (req, res) => {
     }
   }
 
-//Remove claa member
+//Remove class member
   const removeClassMember = async (req, res) => {
     try {
       let { userName } = req.body;
+
+      if (!userName || userName == "") {
+        return res.status(400).json({ error: "userName should be passed!", message: "Could not add member to a class"}).end();
+      }
+
       userName = userName.trim()
       let owner = req.body.user._id.toString();
 
@@ -147,7 +155,193 @@ const addClassMember = async (req, res) => {
     }
   }
 
+//Get class members
+const getClassMembers = async (req, res) => {
+  try {
+    let owner = req.body.user._id.toString();
+
+    const foundClass = await Class.findOne({_id: req.params.id});
+
+    if (!foundClass) {
+      return res.status(400).json({ error: "Class does not exist!", message: "Could not find class by that ID."}).end();
+    }
+
+    const isMember = await ClassMember.findOne({userId: owner, classId: foundClass._id}).lean().exec();
+
+    if (foundClass.owner.toString() !== owner && !isMember){
+      return res.status(400).json({ error: "You dare not added to this class yet!", message: "You can't see members from this class!"}).end();
+    }
+
+    const classMembers = await ClassMember.find({classId: foundClass._id}).populate("userId").populate("classId").lean().exec();
+    return res.status(201).json({
+      message: "Class members retrieved successfully!",
+      data: classMembers
+      }).end();
+  }
+  catch (err) {
+    if (err.isJoi === true) {
+      return res.status(400).json({ error: err.details[0].message, message: err.details[0].message }).end();
+    }
+    return res.status(400).json({ error: "Wrong format of info sent.", message: err.message }).end();
+  }
+}
 
 
-const ClassControllers = { createClass, addClassMember, removeClassMember }
+//Get class members
+const getMyClasses = async (req, res) => {
+  try {
+    let owner = req.body.user._id.toString();
+
+    const onesAmMemberOf = await ClassMember.find({userId: owner}).populate("userId").populate("classId").lean().exec();
+    const onesAmOwnerOf = await Class.find({owner,}).lean().exec();
+    return res.status(201).json({
+      message: "Classes retrieved successfully!",
+      data: {
+        onesAmMemberOf,
+        onesAmOwnerOf
+      }
+      }).end();
+  }
+  catch (err) {
+    if (err.isJoi === true) {
+      return res.status(400).json({ error: err.details[0].message, message: err.details[0].message }).end();
+    }
+    return res.status(400).json({ error: "Wrong format of info sent.", message: err.message }).end();
+  }
+}
+
+
+
+//Add Event to class
+const addEventToClass = async (req, res) => {
+  try {
+    let {title,description,googleMeetLink,startTime,endTime }  = req.body;
+
+    let owner = req.body.user._id.toString();
+
+    const foundClass = await Class.findOne({_id: req.params.id});
+
+    if (!foundClass) {
+      return res.status(400).json({ error: "Class does not exist!", message: "Could not find class by that ID."}).end();
+    }
+
+    if (foundClass.owner.toString() !== owner){
+      return res.status(400).json({ error: "Class does not belong to you!", message: "You can't add an Event to this class!"}).end();
+    }
+
+    let attachments = req.body.archives
+
+    const validatedEvent = await eventValidation.validateAsync({ userId: owner, classId:req.params.id, title, description, googleMeetLink, attachments,startTime, endTime});
+    const newEvent = await Event.create({...validatedEvent});
+
+    return res.status(201).json({
+        message: "Event added to a class successfully!",
+        data: newEvent
+      }).end();
+  } catch (err) {
+    if (err.isJoi === true) {
+      return res.status(400).json({ error: err.details[0].message, message: err.details[0].message }).end();
+    }
+    return res.status(400).json({ error: "Wrong format of info sent.", message: err.message }).end();
+  }
+}
+
+
+//Get class Events
+const getClassEvents = async (req, res) => {
+  try {
+    let owner = req.body.user._id.toString();
+
+    const foundClass = await Class.findOne({_id: req.params.id});
+
+    if (!foundClass) {
+      return res.status(400).json({ error: "Class does not exist!", message: "Could not find class by that ID."}).end();
+    }
+
+    const isMember = await ClassMember.findOne({userId: owner, classId: foundClass._id}).lean().exec();
+
+    if (foundClass.owner.toString() !== owner && !isMember){
+      return res.status(400).json({ error: "You are not added to this class yet!", message: "You can't see Events from this class!"}).end();
+    }
+
+    const classEvents = await Event.find({classId: foundClass._id}).populate("userId").populate("classId").lean().exec();
+    return res.status(201).json({
+      message: "Class events retrieved successfully!",
+      data: classEvents
+      }).end();
+  }
+  catch (err) {
+    if (err.isJoi === true) {
+      return res.status(400).json({ error: err.details[0].message, message: err.details[0].message }).end();
+    }
+    return res.status(400).json({ error: "Wrong format of info sent.", message: err.message }).end();
+  }
+}
+
+//Add Announcement to class
+const addAnnouncementToClass = async (req, res) => {
+  try {
+    let {title,description,googleMeetLink }  = req.body;
+
+    let owner = req.body.user._id.toString();
+
+    const foundClass = await Class.findOne({_id: req.params.id});
+
+    if (!foundClass) {
+      return res.status(400).json({ error: "Class does not exist!", message: "Could not find class by that ID."}).end();
+    }
+
+    if (foundClass.owner.toString() !== owner){
+      return res.status(400).json({ error: "Class does not belong to you!", message: "You can't add an Event to this class!"}).end();
+    }
+
+    let attachments = req.body.archives
+
+    const validatedAnnouncement = await announcementValidation.validateAsync({ userId: owner, classId:req.params.id, title, description, googleMeetLink, attachments});
+    const newAnnouncement = await Announcement.create({...validatedAnnouncement});
+
+    return res.status(201).json({
+        message: "Announcement added to a class successfully!",
+        data: newAnnouncement
+      }).end();
+  } catch (err) {
+    if (err.isJoi === true) {
+      return res.status(400).json({ error: err.details[0].message, message: err.details[0].message }).end();
+    }
+    return res.status(400).json({ error: "Wrong format of info sent.", message: err.message }).end();
+  }
+}
+
+//Get class Announcements
+const getClassAnnouncements = async (req, res) => {
+  try {
+    let owner = req.body.user._id.toString();
+
+    const foundClass = await Class.findOne({_id: req.params.id});
+
+    if (!foundClass) {
+      return res.status(400).json({ error: "Class does not exist!", message: "Could not find class by that ID."}).end();
+    }
+
+    const isMember = await ClassMember.findOne({userId: owner, classId: foundClass._id}).lean().exec();
+
+    if (foundClass.owner.toString() !== owner && !isMember){
+      return res.status(400).json({ error: "You are not added to this class yet!", message: "You can't see Announcements from this class!"}).end();
+    }
+
+    const classAnnouncements = await Announcement.find({classId: foundClass._id}).populate("userId").populate("classId").lean().exec();
+    return res.status(201).json({
+      message: "Class Announcement retrieved successfully!",
+      data: classAnnouncements
+      }).end();
+  }
+  catch (err) {
+    if (err.isJoi === true) {
+      return res.status(400).json({ error: err.details[0].message, message: err.details[0].message }).end();
+    }
+    return res.status(400).json({ error: "Wrong format of info sent.", message: err.message }).end();
+  }
+}
+
+const ClassControllers = { createClass, addClassMember, removeClassMember, getClassMembers,getMyClasses,addEventToClass, getClassEvents, addAnnouncementToClass, getClassAnnouncements}
 export default ClassControllers
