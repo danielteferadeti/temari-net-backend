@@ -2,9 +2,9 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "dist/app.js",
   "engines": {
-    "node": "16.15.1"
+    "node": "16.x"
   },
   "scripts": {
     "test": "jest",
