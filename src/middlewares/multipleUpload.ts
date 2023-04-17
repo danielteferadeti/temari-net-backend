@@ -27,7 +27,6 @@ export default async function multipleUpload (req:FileRequest, res:Response, nex
       
       let multipleArchivePromise = []
       const parser = new DataURIParser()
-      
       for (let i=0; archiveFiles.archives && i<archiveFiles.archives.length; i++){
           const archive = await upload(req,res,next,archiveFiles.archives[i],isValidFormat)
           multipleArchivePromise.push(archive)

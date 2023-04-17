@@ -7,6 +7,8 @@ export interface IUserDocument extends Document {
   name: string
   email: string
   bio: string
+  department: string
+  year: string
   country: string
   avatar: Schema.Types.ObjectId
   password: string
@@ -47,6 +49,14 @@ const UserSchema: Schema<IUserDocument, UserModel> = new Schema(
     bio: {
       type: String,
       default: "Your bio goes here."
+    },
+    department: {
+      type: String,
+      default: "Your department goes here."
+    },
+    year: {
+      type: String,
+      default: "Your year goes here."
     },
     country: {
       type: String,
@@ -104,9 +114,11 @@ const User = model<IUserDocument, UserModel>('User', UserSchema)
 export const userValidation = Joi.object({
   email: Joi.string().min(6).required().email().trim().lowercase(),
   password: Joi.string().min(6).required().trim(),
-  userName: Joi.string().required().trim(),
+  userName: Joi.string().trim().alphanum().pattern(/^[^\s]+$/).required(),
   name: Joi.string().required().trim(),
   bio: Joi.string().default("Your bio goes here.").trim(),
+  department: Joi.string().default("Your department goes here.").trim(),
+  year: Joi.string().default("Your year goes here.").trim(),
   country: Joi.string().default("Your country goes here.").trim(),
   avatar: Joi.string().hex().length(24),
   favoriteTags: Joi.array().max(5),

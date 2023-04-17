@@ -20,6 +20,7 @@ app.use(expressupload());
 app.use(cors());
 
 app.use("/api/v1/user", routes.userRouter);
+app.use("/api/v1/class", routes.classRouter);
 app.use("/api/v1/issue", routes.issueRouter);
 app.use("/api/v1/vote", routes.voteRouter);
 app.use("/api/v1/answer", routes.answerRouter);

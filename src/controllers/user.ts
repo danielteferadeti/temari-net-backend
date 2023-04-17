@@ -58,10 +58,9 @@ const userLogin = async (req: Request, res: Response) => {
 
 const userSignup = async (req, res) => {
   try {
-    console.log(req.body)
-    let { userName, name,email,bio,country,avatar,password,favoriteTags } = req.body;
+    let { userName, name,email,bio,department, year, country,avatar,password,favoriteTags } = req.body;
 
-    const validatedUser = await userValidation.validateAsync({ userName, name,email,bio,country,avatar,password,favoriteTags });
+    const validatedUser = await userValidation.validateAsync({ userName, name,email,bio, department, year,country,avatar,password,favoriteTags });
 
     //check if user exists with email
     const userByEmail = await User.findOne({ email: validatedUser.email }).lean().exec();
@@ -362,7 +361,7 @@ const forgotChangePassword = async (req: Request, res: Response) => {
 //CurrentUser
 const currentUser = (req: Request, res:Response) => {
   let token = req.headers['authorization'] || req.body.token || req.headers.cookie?.split('=')[1] || req.cookies?.jwt;
-  
+
   if (token) {
     const bearer = token.split(' ');
     if(bearer.length == 2){
