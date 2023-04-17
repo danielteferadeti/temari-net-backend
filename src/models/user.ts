@@ -114,7 +114,7 @@ const User = model<IUserDocument, UserModel>('User', UserSchema)
 export const userValidation = Joi.object({
   email: Joi.string().min(6).required().email().trim().lowercase(),
   password: Joi.string().min(6).required().trim(),
-  userName: Joi.string().required().trim(),
+  userName: Joi.string().trim().alphanum().pattern(/^[^\s]+$/).required(),
   name: Joi.string().required().trim(),
   bio: Joi.string().default("Your bio goes here.").trim(),
   department: Joi.string().default("Your department goes here.").trim(),
