@@ -6,7 +6,7 @@ const isIssueOwner= async (req:Request,res:Response,next:NextFunction)=>{
     try{
         let {user = null} = req.body
         const issue = await Issue.findById(req.params.id).lean().exec();
-        if ((user._id).equals(issue.user)){
+        if ((user._id).equals(issue.userId)){
             next()
             return
         }
@@ -25,7 +25,7 @@ const isAnswerOwner= async (req:Request,res:Response,next:NextFunction)=>{
     try{
         let {user = null} = req.body
         const answer = await Answer.findById(req.params.id).lean().exec();
-        if ((user._id).equals(answer.user)){
+        if ((user._id).equals(answer.userId)){
             next()
             return
         }

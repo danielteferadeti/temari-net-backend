@@ -4,8 +4,8 @@ import User from "./user";
 import Class from "./class";
 
 export interface IVote extends Document {
-    user: Schema.Types.ObjectId
-    answer: Schema.Types.ObjectId
+    userId: Schema.Types.ObjectId
+    answerId: Schema.Types.ObjectId
     value: number
     createdAt: Date
     updatedAt: Date
@@ -13,12 +13,12 @@ export interface IVote extends Document {
 
 
 const VoteSchema: Schema<IVote> = new Schema({
-    user: {
+    userId: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: User
     },
-    answer: {
+    answerId: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: Class
@@ -41,8 +41,8 @@ const Vote = model<IVote>('Vote', VoteSchema)
 
   
 export const voteValidation = Joi.object<IVote>({
-    user: Joi.string().required(),
-    answer: Joi.string().required(),
+    userId: Joi.string().required(),
+    answerId: Joi.string().required(),
     value: Joi.number().required()
 })
 

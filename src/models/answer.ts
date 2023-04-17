@@ -4,8 +4,8 @@ import User from "./user";
 import Issue from "./issue";
 
 export interface IAnswer extends Document {
-    user: Schema.Types.ObjectId
-    issue: Schema.Types.ObjectId
+    userId: Schema.Types.ObjectId
+    issueId: Schema.Types.ObjectId
     description: string
     archives: [Schema.Types.ObjectId]
     upVote: number
@@ -16,12 +16,12 @@ export interface IAnswer extends Document {
 
 
 const AnswerSchema: Schema<IAnswer> = new Schema({
-    user: {
+    userId: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: User
     },
-    issue: {
+    issueId: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: Issue
@@ -58,8 +58,8 @@ const AnswerSchema: Schema<IAnswer> = new Schema({
 const Answer = model<IAnswer>('Answer', AnswerSchema)
 
 export const answerValidation = Joi.object<IAnswer>({
-    user: Joi.string().required(),
-    issue: Joi.string().required(),
+    userId: Joi.string().required(),
+    issueId: Joi.string().required(),
     description: Joi.string().required().messages({
         'any.required': 'Description is required.',
     }),
