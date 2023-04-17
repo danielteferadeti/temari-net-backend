@@ -1,9 +1,11 @@
 import Joi from "joi";
 import { Schema, Document, model } from "mongoose";
+import User from "./user";
+import Issue from "./issue";
 
 export interface IAnswer extends Document {
-    userId: Schema.Types.ObjectId
-    issueId: Schema.Types.ObjectId
+    user: Schema.Types.ObjectId
+    issue: Schema.Types.ObjectId
     description: string
     archives: [Schema.Types.ObjectId]
     upVote: number
@@ -14,13 +16,15 @@ export interface IAnswer extends Document {
 
 
 const AnswerSchema: Schema<IAnswer> = new Schema({
-    userId: {
+    user: {
         type: Schema.Types.ObjectId,
-        required: true
+        required: true,
+        ref: User
     },
-    issueId: {
+    issue: {
         type: Schema.Types.ObjectId,
-        required: true
+        required: true,
+        ref: Issue
     },
     description: {
         type: String,
@@ -56,8 +60,8 @@ const Answer = model<IAnswer>('Answer', AnswerSchema)
 
 
 export const answerValidation = Joi.object<IAnswer>({
-    userId: Joi.string().required(),
-    issueId: Joi.string().required(),
+    user: Joi.string().required(),
+    issue: Joi.string().required(),
     description: Joi.string().required().messages({
         'any.required': 'Description is required.',
     }),

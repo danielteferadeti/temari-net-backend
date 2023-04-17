@@ -1,9 +1,11 @@
-import Joi from "joi";
+import Joi, { ref } from "joi";
 import { Schema, Document, model, Model } from "mongoose";
+import User from "./user";
+import Class from "./class";
 
 export interface IIssue extends Document {
-    userId: Schema.Types.ObjectId
-    classId: Schema.Types.ObjectId
+    user: Schema.Types.ObjectId
+    class: Schema.Types.ObjectId
     title: string
     description: string
     archives: [Schema.Types.ObjectId]
@@ -14,13 +16,15 @@ export interface IIssue extends Document {
 
 
 const IssueSchema: Schema<IIssue> = new Schema({
-    userId: {
+    user: {
         type: Schema.Types.ObjectId,
-        required: true
+        required: true,
+        ref: User
     },
-    classId: {
+    class: {
         type: Schema.Types.ObjectId,
-        required: true
+        required: true,
+        ref: Class
     },
     title: {
         type: String,
@@ -52,8 +56,8 @@ const IssueSchema: Schema<IIssue> = new Schema({
 const Issue = model<IIssue>('Issue', IssueSchema)
   
 export const issueValidation = Joi.object<IIssue>({
-    userId: Joi.string().required(),
-    classId: Joi.string().required(),
+    user: Joi.string().required(),
+    class: Joi.string().required(),
     title: Joi.string().required(),
     description: Joi.string().required().messages({
       'any.required': 'Description is required.',

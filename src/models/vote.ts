@@ -1,9 +1,11 @@
 import Joi from "joi";
 import { Schema, Document, model } from "mongoose";
+import User from "./user";
+import Class from "./class";
 
 export interface IVote extends Document {
-    userId: Schema.Types.ObjectId
-    answerId: Schema.Types.ObjectId
+    user: Schema.Types.ObjectId
+    answer: Schema.Types.ObjectId
     value: number
     createdAt: Date
     updatedAt: Date
@@ -11,13 +13,15 @@ export interface IVote extends Document {
 
 
 const VoteSchema: Schema<IVote> = new Schema({
-    userId: {
+    user: {
         type: Schema.Types.ObjectId,
-        required: true
+        required: true,
+        ref: User
     },
-    answerId: {
+    answer: {
         type: Schema.Types.ObjectId,
-        required: true
+        required: true,
+        ref: Class
     },
     value: {
         type: Number,
@@ -37,8 +41,8 @@ const Vote = model<IVote>('Vote', VoteSchema)
 
   
 export const voteValidation = Joi.object<IVote>({
-    userId: Joi.string().required(),
-    answerId: Joi.string().required(),
+    user: Joi.string().required(),
+    answer: Joi.string().required(),
     value: Joi.number().required()
 })
 
