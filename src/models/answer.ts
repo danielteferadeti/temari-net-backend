@@ -57,8 +57,6 @@ const AnswerSchema: Schema<IAnswer> = new Schema({
 
 const Answer = model<IAnswer>('Answer', AnswerSchema)
 
-
-
 export const answerValidation = Joi.object<IAnswer>({
     user: Joi.string().required(),
     issue: Joi.string().required(),
