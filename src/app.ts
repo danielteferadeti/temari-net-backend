@@ -24,7 +24,7 @@ app.use("/api/v1/class", routes.classRouter);
 
 
 app.get("/", (req, res) => {
-  return res.send("Welcome to a2sv.org Page!");
+  return res.send("Welcome to temari net Page!");
 });
 
 // Error handling
