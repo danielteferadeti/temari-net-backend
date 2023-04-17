@@ -11,7 +11,7 @@
     "dev": "npx nodemon",
     "build": "tsc -p .",
     "start": "node dist/app.js",
-    "deploy": "vercel deploy --prod"
+    "deploy": "vercel deploy --force"
   },
   "keywords": [],
   "author": "",
