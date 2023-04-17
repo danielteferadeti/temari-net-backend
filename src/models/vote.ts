@@ -34,13 +34,11 @@ const VoteSchema: Schema<IVote> = new Schema({
 
 const Vote = model<IVote>('Vote', VoteSchema)
 
-const objectId = Joi.object({
-    id: Joi.string().hex().length(24)
-  })
+
   
 export const voteValidation = Joi.object<IVote>({
-    userId: objectId.required(),
-    answerId: objectId.required(),
+    userId: Joi.string().required(),
+    answerId: Joi.string().required(),
     value: Joi.number().required()
 })
 

@@ -50,19 +50,15 @@ const IssueSchema: Schema<IIssue> = new Schema({
 
 
 const Issue = model<IIssue>('Issue', IssueSchema)
-
-const objectId = Joi.object({
-    id: Joi.string().hex().length(24)
-  })
   
 export const issueValidation = Joi.object<IIssue>({
-    userId: objectId.required(),
-    classId: objectId.required(),
+    userId: Joi.string().required(),
+    classId: Joi.string().required(),
     title: Joi.string().required(),
     description: Joi.string().required().messages({
       'any.required': 'Description is required.',
     }),
-    archives: Joi.array().items(objectId),
+    archives: Joi.array(),
     tags: Joi.array().items(Joi.string()),
 })
 

@@ -1,11 +1,12 @@
 import { Document } from 'mongoose';
 import { Request, Response } from "express";
-import Vote, { IVote } from '../models/vote';
+import Vote, { IVote, voteValidation } from '../models/vote';
 
 export const createVote = async (req: Request, res: Response): Promise<void> => {
     try {
-        const vote: Document<IVote> = await Vote.create({
-            value: req.body.val,
+        const { userId, answerId, value } = req.body;
+        const vote: IVote = await Vote.create({
+            userId, answerId, value
         })
 
         res.status(201).json({ vote: vote })
@@ -36,7 +37,7 @@ export const getVoteById = async (req: Request, res: Response): Promise<void> =>
 
 export const getAllVotes = async (req: Request, res: Response): Promise<void> => {
     try {
-        const votes: Document<IVote>[] | null = await Vote.find()
+        const votes: IVote[] | null = await Vote.find()
 
         if (!votes) {
             res.status(404).json({ error: 'No vote found' });
@@ -50,35 +51,39 @@ export const getAllVotes = async (req: Request, res: Response): Promise<void> =>
 
 export const updateVote = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { id } = req.params
-        const vote = {
-            value: req.body.val
-        }
-        const changeVote = await Vote.findByIdAndUpdate(id, vote, { new: true })
-        if (!changeVote) {
-            res.status(404).json({ error: 'No vote found' });
-        } else {
-            res.status(200).json({ vote: changeVote })
-        }
+        const { id } = req.params;
+        const { userId, answerId, value } = req.body;
+        const validatedVote = await voteValidation.validateAsync({ userId, answerId, value });
 
-    } catch (error) {
-        res.status(500).json({ error: error });
+        const updatedVote: IVote | null = await Vote.findByIdAndUpdate(
+            id,
+            { ...validatedVote },
+            { new: true }
+        );
+        if (!updatedVote) {
+            res.status(404).json({ error: 'Issue not found' });
+        } else {
+            res.json(updatedVote);
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(400).json({ error: err.message });
     }
 }
 
 export const deletVote = async (req: Request, res: Response): Promise<void> => {
     try {
-        await Vote.findByIdAndRemove(req.params.voteID).then(() => {
-            res.status(200).json({
-                message: "Vote deleted successfully"
-            });
-        }).catch((error: Error) => {
-            res.status(404).json({
-                error: error
-            });
-        });
-    } catch (error) {
-        res.status(500).json({ error: error });
+        const { id } = req.params;
+        const deletedVote: IVote | null = await Vote.findByIdAndDelete(id);
+        if (!deletedVote) {
+            res.status(404).json({ error: 'Issue not found' });
+        } else {
+            res.json(deletedVote);
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    
     }
 }
 

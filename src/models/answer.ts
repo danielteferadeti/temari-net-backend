@@ -3,7 +3,7 @@ import { Schema, Document, model } from "mongoose";
 
 export interface IAnswer extends Document {
     userId: Schema.Types.ObjectId
-    answerId: Schema.Types.ObjectId
+    issueId: Schema.Types.ObjectId
     description: string
     archives: [Schema.Types.ObjectId]
     upVote: number
@@ -18,7 +18,7 @@ const AnswerSchema: Schema<IAnswer> = new Schema({
         type: Schema.Types.ObjectId,
         required: true
     },
-    answerId: {
+    issueId: {
         type: Schema.Types.ObjectId,
         required: true
     },
@@ -53,17 +53,15 @@ const AnswerSchema: Schema<IAnswer> = new Schema({
 
 const Answer = model<IAnswer>('Answer', AnswerSchema)
 
-const objectId = Joi.object({
-    id: Joi.string().hex().length(24)
-})
+
 
 export const answerValidation = Joi.object<IAnswer>({
-    userId: objectId.required(),
-    answerId: objectId.required(),
+    userId: Joi.string().required(),
+    issueId: Joi.string().required(),
     description: Joi.string().required().messages({
         'any.required': 'Description is required.',
     }),
-    archives: Joi.array().items(objectId),
+    archives: Joi.array().items(Joi.string()),
     upVote: Joi.number(),
     downVote: Joi.number()
 })
