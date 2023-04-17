@@ -1,45 +1,43 @@
 import { Request, Response } from 'express';
-import { Document, Types } from 'mongoose';
 import Issue, { IIssue, issueValidation } from '../models/issue';
 
 export const getAllIssues = async (req: Request, res: Response): Promise<void> => {
     try {
-        const issues: IIssue[] = await Issue.find();
-        res.status(200).json(issues);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Internal Server Error' });
+        const issues: IIssue[] = await Issue.find().populate("userId");
+        res.status(200).json({message: "Issues retrieved successfully", data: issues});
+    } catch (error) {
+        res.status(500).json({ error: error.message, message: 'Internal Server Error' });
     }
 };
 
 export const createIssue = async (req: Request, res: Response): Promise<void> => {
     try {
         let { userId, classId, title, description, archives, tags } = req.body;
+        console.log(req.body)
         const validatedIssue = await issueValidation.validateAsync({ 
             userId, classId, title, description, archives, tags });
-
+        
         const issue: IIssue = await Issue.create({
             ...validatedIssue
+            
         });
-        res.status(201).json(issue);
-    } catch (err) {
-        console.error(err);
-        res.status(400).json({ error: err.message });
+        res.status(201).json({message: "Issue created successfully", data: issue});
+    } catch (error) {
+        res.status(500).json({ error: error.message, message: 'Internal Server Error' });
     }
 };
 
 export const getIssueById = async (req: Request, res: Response): Promise<void> => {
     try {
         const { id } = req.params;
-        const issue: IIssue | null = await Issue.findById(id);
+        const issue: IIssue | null = await Issue.findById(id).populate('userId')
         if (!issue) {
-            res.status(404).json({ error: 'Issue not found' });
+            res.status(404).json({ error: 'Issue not found', message: 'An Issue with the given Id doesn\'t exists'});
         } else {
-            res.json(issue);
+            res.status(200).json({message: "Issues retrieved successfully", data: issue});
         }
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Internal Server Error' });
+    } catch (error) {
+        res.status(500).json({ error: error.message, message: 'Internal Server Error' });
     }
 };
 
@@ -55,13 +53,12 @@ export const updateIssueById = async (req: Request, res: Response): Promise<void
             { new: true }
         );
         if (!updatedIssue) {
-            res.status(404).json({ error: 'Issue not found' });
+            res.status(404).json({ error: 'Issue not found', message: 'An Issue with the given Id doesn\'t exists'});
         } else {
-            res.json(updatedIssue);
+            res.status(200).json({message: "Issues updated successfully", data: updatedIssue});
         }
-    } catch (err) {
-        console.error(err);
-        res.status(400).json({ error: err.message });
+    } catch (error) {
+        res.status(500).json({ error: error.message, message: 'Internal Server Error' });
     }
 };
 
@@ -70,13 +67,12 @@ export const deleteIssueById = async (req: Request, res: Response): Promise<void
         const { id } = req.params;
         const deletedIssue: IIssue | null = await Issue.findByIdAndDelete(id);
         if (!deletedIssue) {
-            res.status(404).json({ error: 'Issue not found' });
+            res.status(404).json({ error: 'Issue not found', message: 'An Issue with the given Id doesn\'t exists'});
         } else {
-            res.json(deletedIssue);
+            res.status(200).json({message: "Issues deleted successfully", data: deletedIssue});
         }
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Internal Server Error' });
+    } catch (error) {
+        res.status(500).json({ error: error.message, message: 'Internal Server Error' });
     }
 };
 

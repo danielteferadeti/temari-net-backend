@@ -1,4 +1,3 @@
-import { Document } from 'mongoose';
 import { Request, Response } from "express";
 import Vote, { IVote, voteValidation } from '../models/vote';
 
@@ -8,10 +7,9 @@ export const createVote = async (req: Request, res: Response): Promise<void> => 
         const vote: IVote = await Vote.create({
             userId, answerId, value
         })
-
-        res.status(201).json({ vote: vote })
-    } catch (e) {
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(201).json({message: "Vote created successfully", data: vote});
+    } catch (error) {
+        res.status(500).json({ error: error.message, message: 'Internal Server Error' });
     }
 }
 
@@ -21,17 +19,14 @@ export const getVoteById = async (req: Request, res: Response): Promise<void> =>
         const vote: IVote | null = await Vote.findById(id);
 
         if (!vote) {
-            res.status(404).json({ error: "Vote not found" })
+            res.status(404).json({ error: 'Vote not found', message: 'A Vote with the given Id doesn\'t exists'});
         } else {
-            const data = {
-                value: vote.value
-            }
-
-            res.status(200).json({ vote: data })
+            res.status(200).json({message: "Vote retrived successfully", data: vote});
         }
 
-    } catch (e) {
-        res.status(500).json({ error: 'Internal Server Error' });
+    } catch (error) {
+        res.status(500).json({ error: error.message, message: 'Internal Server Error' });
+
     }
 }
 
@@ -40,12 +35,13 @@ export const getAllVotes = async (req: Request, res: Response): Promise<void> =>
         const votes: IVote[] | null = await Vote.find()
 
         if (!votes) {
-            res.status(404).json({ error: 'No vote found' });
+            res.status(404).json({ error: 'Vote not found', message: 'A Vote with the given Id doesn\'t exists'});
         } else {
-            res.status(200).json({ votes: votes })
+            res.status(200).json({message: "Votes retrived successfully", data: votes});
         }
-    } catch (e) {
-        res.status(500).json({ error: 'Internal Server Error' });
+    } catch (error) {
+        res.status(500).json({ error: error.message, message: 'Internal Server Error' });
+
     }
 }
 
@@ -61,13 +57,12 @@ export const updateVote = async (req: Request, res: Response): Promise<void> => 
             { new: true }
         );
         if (!updatedVote) {
-            res.status(404).json({ error: 'Issue not found' });
+            res.status(404).json({ error: 'Vote not found', message: 'A Vote with the given Id doesn\'t exists'});
         } else {
-            res.json(updatedVote);
+            res.status(200).json({message: "Vote updated successfully", data: updatedVote});
         }
-    } catch (err) {
-        console.error(err);
-        res.status(400).json({ error: err.message });
+    } catch (error) {
+        res.status(500).json({ error: error.message, message: 'Internal Server Error' });
     }
 }
 
@@ -76,14 +71,12 @@ export const deletVote = async (req: Request, res: Response): Promise<void> => {
         const { id } = req.params;
         const deletedVote: IVote | null = await Vote.findByIdAndDelete(id);
         if (!deletedVote) {
-            res.status(404).json({ error: 'Issue not found' });
+            res.status(404).json({ error: 'Vote not found', message: 'A Vote with the given Id doesn\'t exists'});
         } else {
-            res.json(deletedVote);
+            res.status(200).json({message: "Vote Deleted successfully", data: deletedVote});
         }
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Internal Server Error' });
-    
+    } catch (error) {
+        res.status(500).json({ error: error.message, message: 'Internal Server Error' });
     }
 }
 
