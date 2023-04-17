@@ -58,9 +58,9 @@ const userLogin = async (req: Request, res: Response) => {
 
 const userSignup = async (req, res) => {
   try {
-    let { userName, name,email,bio,country,avatar,password,favoriteTags } = req.body;
+    let { userName, name,email,bio,department, year, country,avatar,password,favoriteTags } = req.body;
 
-    const validatedUser = await userValidation.validateAsync({ userName, name,email,bio,country,avatar,password,favoriteTags });
+    const validatedUser = await userValidation.validateAsync({ userName, name,email,bio, department, year,country,avatar,password,favoriteTags });
 
     //check if user exists with email
     const userByEmail = await User.findOne({ email: validatedUser.email }).lean().exec();
