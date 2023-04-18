@@ -2,9 +2,11 @@ import { Request, Response, NextFunction} from 'express'
 import User, { IUserDocument, userValidation } from '../models/user'
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import configs from '../config/configs';
 
 dotenv.config()
-const jwtSecret = process.env.JWT_SECRET;
+const jwtSecret = process.env.JWT_SECRET || configs.JWT_SECRET;
+
 
 const isAuthenticated = (req: Request, res:Response, next: NextFunction) => {
   let token = req.headers['authorization'] || req.body.token || req.headers.cookie?.split('=')[1] || req.cookies?.jwt;

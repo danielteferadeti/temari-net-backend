@@ -3,9 +3,9 @@ import { Request, Response } from 'express'
 import Class, { IClass, classValidation } from '../models/class'
 import User, { userValidation } from '../models/user'
 import ClassMember, { classMemberValidation } from '../models/classmember'
+
 import Event, { eventValidation } from '../models/event'
 import Announcement, { announcementValidation } from '../models/announcement'
-
 
 const createClass = async (req, res) => {
     try {
@@ -23,7 +23,9 @@ const createClass = async (req, res) => {
       }
   
       const new_class = await Class.create({...validatedClass});
+
       const addedMember = await ClassMember.create({userId: owner, classId: new_class._id});
+
 
       //finish registering the class || send success message
       return res.status(201).json({
@@ -95,6 +97,7 @@ const addClassMember = async (req, res) => {
       }
 
       return res.status(400).json({ error: "No member to add", message: "Make sure to send user names you would like to add to the class." }).end();
+
     }
     catch (err) {
       if (err.isJoi === true) {
@@ -112,7 +115,6 @@ const addClassMember = async (req, res) => {
       if (!userName || userName == "") {
         return res.status(400).json({ error: "userName should be passed!", message: "Could not add member to a class"}).end();
       }
-
       userName = userName.trim()
       let owner = req.body.user._id.toString();
 
