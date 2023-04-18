@@ -1,19 +1,16 @@
 import mongoose, { Schema, Document, Model, model, ObjectId } from 'mongoose';
 import Joi from 'joi';
 
-export interface IEvent extends Document{
+export interface IAnnouncement extends Document{
     userId: Schema.Types.ObjectId,
     classId: Schema.Types.ObjectId
     title: String,
     description: String,
     googleMeetLink: String,
-    attachments: Schema.Types.ObjectId[],
-
-    startTime: String,
-    endTime: String
+    attachments: String[],
 }
 
-const eventSchema: Schema<IEvent> = new mongoose.Schema({
+const announcementSchema: Schema<IAnnouncement> = new mongoose.Schema({
     userId: {
         type: Schema.Types.ObjectId,
         required: [true, "user Id is required"],
@@ -22,7 +19,6 @@ const eventSchema: Schema<IEvent> = new mongoose.Schema({
     classId: {
         type: Schema.Types.ObjectId,
         required: [true, "class is is required"],
-
         ref: "Class"
     },
     title: {
@@ -33,27 +29,14 @@ const eventSchema: Schema<IEvent> = new mongoose.Schema({
         type: String,
         default: "Your description should go here!"
     },
-
     googleMeetLink: {
         type: String,
         default: "Your google Meet link should go here!"
     },
     attachments:{
-        type: [{
-            type: Schema.Types.ObjectId,
-            ref: 'File'
-          }],
+        type: [String],
         default: []
-    },
-    startTime: {
-        type: String,
-        default: "Event start time"
-    },
-    endTime: {
-        type: String,
-        default: "Event end time"
-
-    },
+    }
 },
 {
     timestamps: {
@@ -62,19 +45,14 @@ const eventSchema: Schema<IEvent> = new mongoose.Schema({
     }
 })
 
-export const eventValidation = Joi.object({
+export const announcementValidation = Joi.object({
     userId: Joi.string().hex().length(24).required(),
     classId: Joi.string().hex().length(24).required(),
     title: Joi.string().required().trim(),
     description: Joi.string().trim(),
-
     googleMeetLink: Joi.string().trim(),
-    attachments: Joi.array().max(5),
-
-    startTime: Joi.string().trim(),
-    endTime: Joi.string().trim()
+    attachments: Joi.array().max(5)
   });
 
-const Event = mongoose.model<IEvent>('Event',eventSchema)
-
-export default Event
+const Announcement = mongoose.model<IAnnouncement>('Announcement',announcementSchema)
+export default Announcement

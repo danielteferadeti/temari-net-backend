@@ -26,8 +26,9 @@ app.use("/api/v1/vote", routes.voteRouter);
 app.use("/api/v1/answer", routes.answerRouter);
 app.use("/api/v1/comment", routes.commentRouter);
 
+
 app.get("/", (req, res) => {
-  return res.send("Welcome to a2sv.org Page!");
+  return res.send("Welcome to temari-net Page!");
 });
 
 // Error handling
