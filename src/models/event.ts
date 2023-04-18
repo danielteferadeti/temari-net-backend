@@ -8,6 +8,7 @@ export interface IEvent extends Document{
     description: String,
     googleMeetLink: String,
     attachments: Schema.Types.ObjectId[],
+
     startTime: String,
     endTime: String
 }
@@ -21,6 +22,7 @@ const eventSchema: Schema<IEvent> = new mongoose.Schema({
     classId: {
         type: Schema.Types.ObjectId,
         required: [true, "class is is required"],
+
         ref: "Class"
     },
     title: {
@@ -31,6 +33,7 @@ const eventSchema: Schema<IEvent> = new mongoose.Schema({
         type: String,
         default: "Your description should go here!"
     },
+
     googleMeetLink: {
         type: String,
         default: "Your google Meet link should go here!"
@@ -49,6 +52,7 @@ const eventSchema: Schema<IEvent> = new mongoose.Schema({
     endTime: {
         type: String,
         default: "Event end time"
+
     },
 },
 {
@@ -63,11 +67,14 @@ export const eventValidation = Joi.object({
     classId: Joi.string().hex().length(24).required(),
     title: Joi.string().required().trim(),
     description: Joi.string().trim(),
+
     googleMeetLink: Joi.string().trim(),
     attachments: Joi.array().max(5),
+
     startTime: Joi.string().trim(),
     endTime: Joi.string().trim()
   });
 
 const Event = mongoose.model<IEvent>('Event',eventSchema)
+
 export default Event

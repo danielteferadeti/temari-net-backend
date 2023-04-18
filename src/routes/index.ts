@@ -2,8 +2,16 @@
 
 import userRouter from "./user";
 import classRouter from "./class";
+import issueRouter from "./issue";
+import voteRouter from "./vote";
+import answerRouter from "./answer";
+import commentRouter from "./comment";
 
 export default {
   userRouter,
-  classRouter
+  classRouter,
+  issueRouter,
+  voteRouter,
+  answerRouter,
+  commentRouter
 };
