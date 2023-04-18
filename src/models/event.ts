@@ -7,7 +7,7 @@ export interface IEvent extends Document{
     title: String,
     description: String,
     googleMeetLink: String,
-    attachments: String[],
+    attachments: Schema.Types.ObjectId[],
     startTime: String,
     endTime: String
 }
@@ -36,7 +36,10 @@ const eventSchema: Schema<IEvent> = new mongoose.Schema({
         default: "Your google Meet link should go here!"
     },
     attachments:{
-        type: [String],
+        type: [{
+            type: Schema.Types.ObjectId,
+            ref: 'File'
+          }],
         default: []
     },
     startTime: {

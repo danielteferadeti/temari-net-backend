@@ -206,8 +206,6 @@ const getMyClasses = async (req, res) => {
   }
 }
 
-
-
 //Add Event to class
 const addEventToClass = async (req, res) => {
   try {
@@ -339,5 +337,48 @@ const getClassAnnouncements = async (req, res) => {
   }
 }
 
-const ClassControllers = { createClass, addClassMember, removeClassMember, getClassMembers,getMyClasses,addEventToClass, getClassEvents, addAnnouncementToClass, getClassAnnouncements}
+//Get class Announcements
+const getAllMyEvents = async (req, res) => {
+  try {
+    let  cur_user = req.body.user._id.toString();
+
+    const {inputDate} = req.query;
+
+    //Get all the classes cur user is in
+    const allClasses = await ClassMember.find({userId: cur_user}).lean().exec();
+    //get all Events in those class
+    let allEvents = []
+
+    for (let idx=0; idx<allClasses.length; idx++){
+      let cur_class = allClasses[idx].classId;
+      //find all events of cur class
+      let allEventsOfCurClass = await Event.find({classId: cur_class}).populate("classId").populate("attachments").lean().exec();
+
+      allEvents.push(...allEventsOfCurClass);
+      }
+
+    //filter the Events if inputDate is given
+    if (!inputDate || inputDate==""){
+      return res.status(201).json({
+        message: "All Events retrieved successfully!",
+        data: allEvents
+        }).end();
+    }
+    
+    allEvents = allEvents.filter(curEvent => curEvent.startTime === inputDate);
+
+    return res.status(201).json({
+      message: "All Events retrieved successfully!",
+      data: allEvents
+      }).end();
+  }
+  catch (err) {
+    if (err.isJoi === true) {
+      return res.status(400).json({ error: err.details[0].message, message: err.details[0].message }).end();
+    }
+    return res.status(400).json({ error: "Wrong format of info sent.", message: err.message }).end();
+  }
+}
+
+const ClassControllers = { createClass, addClassMember, removeClassMember, getClassMembers,getMyClasses,addEventToClass, getClassEvents, addAnnouncementToClass, getClassAnnouncements, getAllMyEvents}
 export default ClassControllers

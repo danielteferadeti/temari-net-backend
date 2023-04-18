@@ -12,6 +12,7 @@ router.get("/classMembers/:id", isAuthenticated, ClassControllers.getClassMember
 router.get("/myClasses", isAuthenticated, ClassControllers.getMyClasses);
 router.post("/addEvent/:id", isAuthenticated, multipleUpload, ClassControllers.addEventToClass);
 router.get("/classEvents/:id", isAuthenticated, ClassControllers.getClassEvents);
+router.get("/allMyEvents", isAuthenticated, ClassControllers.getAllMyEvents);
 router.post("/addAnnouncement/:id", isAuthenticated, multipleUpload, ClassControllers.addAnnouncementToClass);
 router.get("/classAnnouncements/:id", isAuthenticated, ClassControllers.getClassAnnouncements);
 
