@@ -44,6 +44,7 @@ export const sendRequest = async (req: Request, verb: string, modelName: string,
           }
         }
       )
+      console.log(model)
     }
 
   } else {
@@ -56,8 +57,9 @@ export const sendRequest = async (req: Request, verb: string, modelName: string,
         }
       }
     );
-    return model.data.user;
+    return model.data.data;
   }
+  console.log(model)
   return model
 }
 
@@ -108,7 +110,6 @@ export const updateAnswerById = async (req: Request, res: Response, next: NextFu
     const { id } = req.params
     const { userId, issueId, description, archives, upVote, downVote } = req.body;
     const validateAnswer = await answerValidation.validateAsync({ userId, issueId, description, archives, upVote, downVote })
-    console.log(description, "/////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\"")
     const answer: IAnswer = await Answer.findByIdAndUpdate( id,{...validateAnswer},{ new: true }).populate([{path: 'userId'}, {path: "issueId"}, {path: "archives"}]);
     res.status(200).json({message: "Answer updated successfully", data: answer});
   } catch (error) {
@@ -168,6 +169,7 @@ export const upVote = async (req: Request, res: Response, next: NextFunction) =>
   try {
     const { answerId } = req.params
     const user = await sendRequest(req, "get", "user");
+
     if (!user) {
       return res.status(404).send({ "error":"user not authenticated", "message": "Please singin first!" })
     }
@@ -177,7 +179,7 @@ export const upVote = async (req: Request, res: Response, next: NextFunction) =>
     if (!answer) {
       res.status(404).json({ error: 'Answer not found', message: 'An Answer with the given Id doesn\'t exists'});
     }
-
+  
     let n_answer = null;
     if (!vote) {
       await sendRequest(req, "post", "vote", null, { userId: userId, answerId: answerId, value: 1 })
