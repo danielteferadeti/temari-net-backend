@@ -42,10 +42,12 @@ const userLogin = async (req: Request, res: Response) => {
 
       res.header('token', token);
       res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
+
+      const cur_user = await User.findOne({_id: user._id}).populate("avatar").lean().exec();
       return res.status(200).json({
         token: token,
         message: 'User logged in successfully',
-        data: user
+        data: cur_user
       });
     }
     catch (err) {
@@ -86,10 +88,11 @@ const userSignup = async (req, res) => {
     res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
 
     //finish registering the user || send success message
+    const cur_user = await User.findOne({_id: new_user._id}).populate("avatar").lean().exec();
     return res.status(201).json({
       token: token,
       message: "User registered successfully!",
-      data: new_user
+      data: cur_user
     }).end();
   }
   catch (err) {
@@ -373,13 +376,14 @@ const currentUser = (req: Request, res:Response) => {
       if (err) {
         return res.status(400).json({ error: "User should be authenticated", message: "User not authenticated. The token sent is bad or expired."}).end();
       } else {
-        let user = await User.findById(decodedToken.id._id);
+        let user = await User.findById(decodedToken.id._id).populate("avatar").lean().exec();
         if(!user){
           return res.status(400).json({ error: "User should be authenticated",  message: "User not authenticated or token sent is bad or expired." }).end();
         }
 
         return res.status(200).json({
-          user: user
+          message: "User data retrieved successfully!",
+          data: user
         });
 
       }
