@@ -1,33 +1,27 @@
 import Joi from "joi";
 import { Schema, Document, model } from "mongoose";
 import User from "./user";
-import Class from "./class";
-import Answer from "./answer";
+import Issue from "./issue";
 
-export interface IVote extends Document {
+export interface IFav extends Document {
     userId: Schema.Types.ObjectId
-    answerId: Schema.Types.ObjectId
-    value: number
+    issueId: Schema.Types.ObjectId
     createdAt: Date
     updatedAt: Date
 }
 
 
-const VoteSchema: Schema<IVote> = new Schema({
+const FavoriteIssueSchema: Schema<IFav> = new Schema({
     userId: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: User
     },
-    answerId: {
+    issueId: {
         type: Schema.Types.ObjectId,
         required: true,
-        ref: Answer
+        ref: Issue
     },
-    value: {
-        type: Number,
-        required: true,
-      },
     },
     {
         timestamps: {
@@ -37,14 +31,11 @@ const VoteSchema: Schema<IVote> = new Schema({
     })
 
 
-const Vote = model<IVote>('Vote', VoteSchema)
+const Fav = model<IFav>('Fav', FavoriteIssueSchema)
 
-
-  
-export const voteValidation = Joi.object<IVote>({
+export const favValidation = Joi.object<IFav>({
     userId: Joi.string().required(),
-    answerId: Joi.string().required(),
-    value: Joi.number().required()
+    issueId: Joi.string().required(),
 })
 
-export default Vote;
+export default Fav;

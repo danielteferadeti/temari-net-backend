@@ -2,6 +2,7 @@ import Joi, { ref } from "joi";
 import { Schema, Document, model, Model } from "mongoose";
 import User from "./user";
 import Class from "./class";
+import File from "./files";
 
 export interface IIssue extends Document {
     userId: Schema.Types.ObjectId
@@ -36,9 +37,8 @@ const IssueSchema: Schema<IIssue> = new Schema({
     },
     archives: {
         type: [Schema.Types.ObjectId],
-        ref: 'File',
-        default: null,
-        required: false
+        ref: File,
+        default: null
     },
     tags: {
         type: [String],
