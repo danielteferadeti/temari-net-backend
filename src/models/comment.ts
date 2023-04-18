@@ -1,7 +1,7 @@
 import Joi from "joi";
 import { Schema, Document, model } from "mongoose";
 import User from "./user";
-import Issue from "./issue";
+import Answer from "./answer";
 
 export interface IComment extends Document {
     userId: Schema.Types.ObjectId
@@ -21,7 +21,7 @@ const CommentSchema: Schema<IComment> = new Schema({
     answerId: {
         type: Schema.Types.ObjectId,
         required: true,
-        ref: Issue
+        ref: Answer
     },
     content: {
         type: String,

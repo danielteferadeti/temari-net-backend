@@ -10,9 +10,9 @@ const router = express.Router();
 router.get('/', answerController.getAllAnswers);
 router.get('/:id', answerController.getAnswerById);
 router.post('/', isAuthenticated, multipleUpload, answerController.createAnswer);
-router.put('/:id', isAuthenticated, isAuthorized.isAnswerOwner, multipleUpload, answerController.updateAnswerById);
+router.put('/:id',  multipleUpload, answerController.updateAnswerById);
 router.delete('/:id', isAuthenticated, isAuthorized.isAnswerOwner, answerController.deleteAnswerById);
-router.post('/downvote/:answerId', isAuthenticated, answerController.downVote);
-router.post('/upvote/:answerId', isAuthenticated, answerController.upVote);
+router.post('/downvote/:answerId', answerController.downVote);
+router.post('/upvote/:answerId',  answerController.upVote);
 
 export default router;

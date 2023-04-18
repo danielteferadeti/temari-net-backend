@@ -108,7 +108,8 @@ export const updateAnswerById = async (req: Request, res: Response, next: NextFu
     const { id } = req.params
     const { userId, issueId, description, archives, upVote, downVote } = req.body;
     const validateAnswer = await answerValidation.validateAsync({ userId, issueId, description, archives, upVote, downVote })
-    const answer: IAnswer = await Answer.findByIdAndUpdate( id,{validateAnswer},{ new: true }).populate([{path: 'userId'}, {path: "issueId"}, {path: "archives"}]);
+    console.log(description, "/////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\"")
+    const answer: IAnswer = await Answer.findByIdAndUpdate( id,{...validateAnswer},{ new: true }).populate([{path: 'userId'}, {path: "issueId"}, {path: "archives"}]);
     res.status(200).json({message: "Answer updated successfully", data: answer});
   } catch (error) {
     res.status(500).json({ error: error.message, message: 'Internal Server Error' });
@@ -155,6 +156,7 @@ export const downVote = async (req: Request, res: Response, next: NextFunction) 
       await sendRequest(req, "put", "vote", vote._id, { userId: userId, answerId: answerId, value: -1 })
       n_answer = await sendRequest(req, "put", "answer", answerId, { ...answer, downVote: answer.downVote + 1, upVote: answer.upVote - 1 })
     }
+    console.log(answer)
     res.status(200).json({message: "Answer downVoted successfully", data: n_answer.data.data});
   } catch (error) {
     res.status(500).json({ error: error.message, message: 'Internal Server Error' });
