@@ -24,6 +24,7 @@ app.use("/api/v1/class", routes.classRouter);
 app.use("/api/v1/issue", routes.issueRouter);
 app.use("/api/v1/vote", routes.voteRouter);
 app.use("/api/v1/answer", routes.answerRouter);
+app.use("/api/v1/comment", routes.commentRouter);
 
 app.get("/", (req, res) => {
   return res.send("Welcome to a2sv.org Page!");

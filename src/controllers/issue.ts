@@ -5,8 +5,20 @@ import { sendRequest } from './answer';
 
 export const getAllIssues = async (req: Request, res: Response): Promise<void> => {
     try {
-        const issues: IIssue[] = await Issue.find().populate([{path: 'userId'}, {path: "classId"}, {path: "archives"}]).exec();
-        res.status(200).json({message: "Issues retrieved successfully", data: issues});
+        const issues = await Issue.find().populate([{path: 'userId'}, {path: "classId"}, {path: "archives"}]).lean().exec();
+        const user = await sendRequest(req, "get", "user");
+        let n_issues = [];
+        for (const issue of issues) {
+            try {
+                let isFavorite = await Fav.findOne({"userId": user._id, "issueId": issue.id}).lean().exec()? true : false;
+                const temp_issue = {...issue, isFavorite: isFavorite};
+                console.log(temp_issue, "temp");
+                n_issues.push(temp_issue);
+            } catch (error) {
+                res.status(400).json({ error: error.message, message: 'Error while checking favorite issues'});
+            }
+        }
+        res.status(200).json({message: "Issues retrieved successfully", data: n_issues});
     } catch (error) {
         res.status(500).json({ error: error.message, message: 'Internal Server Error' });
     }
