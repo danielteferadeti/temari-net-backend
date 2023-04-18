@@ -23,7 +23,7 @@ const createClass = async (req, res) => {
       }
   
       const new_class = await Class.create({...validatedClass});
-  
+      const addedMember = await ClassMember.create({userId: owner, classId: new_class._id});
 
       //finish registering the class || send success message
       return res.status(201).json({
@@ -192,14 +192,10 @@ const getMyClasses = async (req, res) => {
   try {
     let owner = req.body.user._id.toString();
 
-    const onesAmMemberOf = await ClassMember.find({userId: owner}).populate("userId").populate("classId").lean().exec();
-    const onesAmOwnerOf = await Class.find({owner,}).lean().exec();
+    const onesAmMemberOf = await ClassMember.find({userId: owner}).populate("classId").lean().exec();
     return res.status(201).json({
       message: "Classes retrieved successfully!",
-      data: {
-        onesAmMemberOf,
-        onesAmOwnerOf
-      }
+      data: onesAmMemberOf
       }).end();
   }
   catch (err) {
