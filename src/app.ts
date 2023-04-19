@@ -28,7 +28,7 @@ app.use("/api/v1/comment", routes.commentRouter);
 
 
 app.get("/", (req, res) => {
-  return res.send("Welcome to temari-net Page!");
+  return res.send("Welcome to School Hive Page!");
 });
 
 // Error handling
