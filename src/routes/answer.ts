@@ -9,6 +9,7 @@ const router = express.Router();
 
 router.get('/', answerController.getAllAnswers);
 router.get('/:id', answerController.getAnswerById);
+router.get("/by-issue/:issueId", answerController.getAnswerByIssueId);
 router.post('/', isAuthenticated, multipleUpload, answerController.createAnswer);
 router.put('/:id',  multipleUpload, answerController.updateAnswerById);
 router.delete('/:id', isAuthenticated, isAuthorized.isAnswerOwner, answerController.deleteAnswerById);

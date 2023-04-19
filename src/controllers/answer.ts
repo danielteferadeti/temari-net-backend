@@ -77,6 +77,23 @@ export const getAnswerById = async (req: Request, res: Response, next: NextFunct
   }
 };
 
+export const getAnswerByIssueId = async (req: Request, res: Response): Promise<void> => {
+  try {
+      const { issueId } = req.params
+      const answers: IAnswer[] | null = await Answer.find({issueId: issueId});
+
+      if (!answers) {
+          res.status(404).json({ error: 'Answers not found', message: 'No Answer with the given answer Id'});
+      } else {
+          res.status(200).json({message: "Answers retrived successfully", data: answers});
+      }
+
+  } catch (error) {
+      res.status(500).json({ error: error.message, message: 'Internal Server Error' });
+
+  }
+}
+
 export const getAllAnswers = async (req: Request, res: Response): Promise<void> => {
   try {
     const answers: IAnswer[] = await Answer.find().populate([{path: 'userId', populate: {path: 'avatar'}}, {path: "issueId"}, {path: "archives"}]);
@@ -198,5 +215,5 @@ export const upVote = async (req: Request, res: Response, next: NextFunction) =>
 }
 
 
-const answerControllers = { getAnswerById, getAllAnswers, createAnswer, updateAnswerById, deleteAnswerById, downVote, upVote }
+const answerControllers = { getAnswerById, getAllAnswers, createAnswer, updateAnswerById, getAnswerByIssueId, deleteAnswerById, downVote, upVote }
 export default answerControllers;
