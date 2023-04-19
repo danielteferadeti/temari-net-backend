@@ -34,4 +34,11 @@ app.get("/", (req, res) => {
 // Error handling
 app.use(errorHandler);
 
+export const config = {
+  api: {
+    timeout: 30
+  }
+};
+
 export default app;
+
