@@ -44,7 +44,7 @@ export const sendRequest = async (req: Request, verb: string, modelName: string,
           }
         }
       )
-      console.log(model)
+      // console.log(model)
     }
 
   } else {
@@ -59,7 +59,7 @@ export const sendRequest = async (req: Request, verb: string, modelName: string,
     );
     return model.data.data;
   }
-  console.log(model)
+  // console.log(model)
   return model
 }
 
@@ -157,7 +157,7 @@ export const downVote = async (req: Request, res: Response, next: NextFunction) 
       await sendRequest(req, "put", "vote", vote._id, { userId: userId, answerId: answerId, value: -1 })
       n_answer = await sendRequest(req, "put", "answer", answerId, { ...answer, downVote: answer.downVote + 1, upVote: answer.upVote - 1 })
     }
-    console.log(answer)
+    // console.log(answer)
     res.status(200).json({message: "Answer downVoted successfully", data: n_answer.data.data});
   } catch (error) {
     res.status(500).json({ error: error.message, message: 'Internal Server Error' });

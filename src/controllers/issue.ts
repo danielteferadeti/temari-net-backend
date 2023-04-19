@@ -7,14 +7,14 @@ export const getAllIssues = async (req: Request, res: Response) =>{
     try {
         const issues = await Issue.find().populate([{path: 'userId'}, {path: "classId"}, {path: "archives"}]).lean().exec();
         const user = await sendRequest(req, "get", "user");
-        console.log(user)
+        // console.log(user)
         let n_issues = [];
-        console.log(req.body)
+        // console.log(req.body)
         for (const issue of issues) {
             try {
                 let isFavorite = await Fav.findOne({"userId": user._id, "issueId": issue.id}).lean().exec()? true : false;
                 const temp_issue = {...issue, isFavorite: isFavorite};
-                console.log(temp_issue, "temp");
+                // console.log(temp_issue, "temp");
                 n_issues.push(temp_issue);
             } catch (error) {
                 return res.status(400).json({ error: error.message, message: 'Error while checking favorite issues'});
@@ -116,7 +116,7 @@ export const manageFavorite = async (req: Request, res: Response): Promise<void>
         if (!favorite) {
             const validatedFavorite = await favValidation.validateAsync({ 
                 userId, issueId });
-                console.log(validatedFavorite)
+                // console.log(validatedFavorite)
             let n_favorite: IFav = await Fav.create({
                 ...validatedFavorite
             });
