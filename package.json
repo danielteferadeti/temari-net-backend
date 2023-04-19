@@ -10,7 +10,7 @@
     "test": "jest",
     "dev": "npx nodemon",
     "build": "tsc -p .",
-    "start": "vercel dev",
+    "start": "node ./dist/server.js",
     "deploy": "vercel deploy --prod"
   },
   "keywords": [],
