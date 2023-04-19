@@ -14,6 +14,6 @@ router.get("/favorite-issues/:userId", isAuthenticated, issueController.getFavor
 router.post('/manage-favorite', isAuthenticated, issueController.manageFavorite)
 router.post('/', isAuthenticated, multipleUpload, issueController.createIssue);
 router.put('/:id', isAuthenticated, multipleUpload, isAuthorized.isIssueOwner, issueController.updateIssueById);
-router.delete('/:id', isAuthenticated, issueController.deleteIssueById);
+router.delete('/:id', isAuthenticated, isAuthorized.isIssueOwner, issueController.deleteIssueById);
 
 export default router;
