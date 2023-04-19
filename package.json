@@ -9,7 +9,7 @@
   "scripts": {
     "test": "jest",
     "dev": "npx nodemon",
-    "build": "tsc -p .",
+    "build": "tsc",
     "start": "node ./dist/server.js",
     "deploy": "vercel deploy --prod"
   },
