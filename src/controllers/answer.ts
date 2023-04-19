@@ -64,7 +64,7 @@ export const sendRequest = async (req: Request, verb: string, modelName: string,
 export const getAnswerById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { id } = req.params
-    const answer = await Answer.findById(id).populate([{path: 'userId'}, {path: "issueId"}, {path: "archives"}]);
+    const answer = await Answer.findById(id).populate([{path: 'userId', populate: {path: 'avatar'}}, {path: "issueId"}, {path: "archives"}]);
     if (!answer) {
       res.status(404).json({ error: 'Answer not found', message: 'An Answer with the given Id doesn\'t exists'});
     } else {
@@ -79,7 +79,7 @@ export const getAnswerById = async (req: Request, res: Response, next: NextFunct
 
 export const getAllAnswers = async (req: Request, res: Response): Promise<void> => {
   try {
-    const answers: IAnswer[] = await Answer.find().populate([{path: 'userId'}, {path: "issueId"}, {path: "archives"}]);
+    const answers: IAnswer[] = await Answer.find().populate([{path: 'userId', populate: {path: 'avatar'}}, {path: "issueId"}, {path: "archives"}]);
     res.status(200).json({message: "Answers retrieved successfully", data: answers});
   } catch (error) {
     res.status(500).json({ error: error.message, message: 'Internal Server Error' });
@@ -94,7 +94,7 @@ export const createAnswer = async (req: Request, res: Response, next: NextFuncti
     let answer: IAnswer | null = await Answer.create({
       ...validateAnswer
     });
-    answer = await answer.populate([{path: 'userId'}, {path: "issueId"}, {path: "archives"}]);
+    answer = await answer.populate([{path: 'userId', populate: {path: 'avatar'}}, {path: "issueId"}, {path: "archives"}]);
     res.status(200).json({message: "Answer created successfully", data: answer});
   } catch (error) {
     res.status(500).json({ error: error.message, message: 'Internal Server Error' });
@@ -108,7 +108,7 @@ export const updateAnswerById = async (req: Request, res: Response, next: NextFu
     const { id } = req.params
     const { userId, issueId, description, archives, upVote, downVote } = req.body;
     const validateAnswer = await answerValidation.validateAsync({ userId, issueId, description, archives, upVote, downVote })
-    const answer: IAnswer = await Answer.findByIdAndUpdate( id,{...validateAnswer},{ new: true }).populate([{path: 'userId'}, {path: "issueId"}, {path: "archives"}]);
+    const answer: IAnswer = await Answer.findByIdAndUpdate( id,{...validateAnswer},{ new: true }).populate([{path: 'userId', populate: {path: 'avatar'}}, {path: "issueId"}, {path: "archives"}]);
     res.status(200).json({message: "Answer updated successfully", data: answer});
   } catch (error) {
     res.status(500).json({ error: error.message, message: 'Internal Server Error' });
@@ -119,7 +119,7 @@ export const updateAnswerById = async (req: Request, res: Response, next: NextFu
 export const deleteAnswerById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { id } = req.params
-    const answer: IAnswer = await Answer.findByIdAndDelete(id).populate([{path: 'userId'}, {path: "issueId"}, {path: "archives"}]);
+    const answer: IAnswer = await Answer.findByIdAndDelete(id).populate([{path: 'userId', populate: {path: 'avatar'}}, {path: "issueId"}, {path: "archives"}]);
     res.status(200).json({message: "Answer deleted successfully", data: answer});
   } catch (error) {
     res.status(500).json({ error: error.message, message: 'Internal Server Error' });

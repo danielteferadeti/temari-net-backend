@@ -7,7 +7,7 @@ export const createComment = async (req: Request, res: Response): Promise<void> 
         let comment: IComment = await Comment.create({
             userId, answerId, content
         })
-        comment = await comment.populate([{path: 'userId'}, {path: "answerId"}]);
+        comment = await comment.populate([{path: 'userId', populate: {path: 'avatar'}}, {path: "answerId"}]);
         res.status(201).json({message: "Comment created successfully", data: comment});
     } catch (error) {
         res.status(500).json({ error: error.message, message: 'Internal Server Error' });
@@ -17,7 +17,7 @@ export const createComment = async (req: Request, res: Response): Promise<void> 
 export const getCommentById = async (req: Request, res: Response): Promise<void> => {
     try {
         const { id } = req.params
-        const comment: IComment | null = await Comment.findById(id).populate([{path: 'userId'}, {path: "answerId"}]);;
+        const comment: IComment | null = await Comment.findById(id).populate([{path: 'userId', populate: {path: 'avatar'}}, {path: "answerId"}]);;
 
         if (!comment) {
             res.status(404).json({ error: 'Comment not found', message: 'A Comment with the given Id doesn\'t exists'});
@@ -34,7 +34,7 @@ export const getCommentById = async (req: Request, res: Response): Promise<void>
 export const getCommentByAnswerId = async (req: Request, res: Response): Promise<void> => {
     try {
         const { answerId } = req.params
-        const comments: IComment[] | null = await Comment.find({answerId: answerId}).populate([{path: 'userId'}, {path: "answerId"}]);
+        const comments: IComment[] | null = await Comment.find({answerId: answerId}).populate([{path: 'userId', populate: {path: 'avatar'}}, {path: "answerId"}]);
 
         if (!comments) {
             res.status(404).json({ error: 'Comment not found', message: 'No Comment with the given answer Id'});
@@ -50,7 +50,7 @@ export const getCommentByAnswerId = async (req: Request, res: Response): Promise
 
 export const getAllComments = async (req: Request, res: Response): Promise<void> => {
     try {
-        const comments: IComment[] | null = await Comment.find().populate([{path: 'userId'}, {path: "answerId"}]);
+        const comments: IComment[] | null = await Comment.find().populate([{path: 'userId', populate: {path: 'avatar'}}, {path: "answerId"}]);
 
         if (!comments) {
             res.status(404).json({ error: 'Comment not found', message: 'A Comment with the given Id doesn\'t exists'});
@@ -73,7 +73,7 @@ export const updateComment = async (req: Request, res: Response): Promise<void> 
             id,
             { ...validatedComment },
             { new: true }
-        ).populate([{path: 'userId'}, {path: "answerId"}]);;
+        ).populate([{path: 'userId', populate: {path: 'avatar'}}, {path: "answerId"}]);;
         if (!updatedComment) {
             res.status(404).json({ error: 'Comment not found', message: 'A Comment with the given Id doesn\'t exists'});
         } else {
@@ -87,7 +87,7 @@ export const updateComment = async (req: Request, res: Response): Promise<void> 
 export const deleteComment = async (req: Request, res: Response): Promise<void> => {
     try {
         const { id } = req.params;
-        const deletedComment: IComment | null = await Comment.findByIdAndDelete(id).populate([{path: 'userId'}, {path: "answerId"}]);;
+        const deletedComment: IComment | null = await Comment.findByIdAndDelete(id).populate([{path: 'userId', populate: {path: 'avatar'}}, {path: "answerId"}]);;
         if (!deletedComment) {
             res.status(404).json({ error: 'Comment not found', message: 'A Comment with the given Id doesn\'t exists'});
         } else {

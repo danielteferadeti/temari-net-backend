@@ -5,7 +5,7 @@ import { sendRequest } from './answer';
 
 export const getAllIssues = async (req: Request, res: Response) =>{
     try {
-        const issues = await Issue.find().populate([{path: 'userId'}, {path: "archives"}]).lean().exec();
+        const issues = await Issue.find().populate([{path: 'userId', populate: {path: 'avatar'}}, {path: "archives"}]).lean().exec();
         const user = await sendRequest(req, "get", "user");
         let n_issues = [];
         for (const issue of issues) {
@@ -34,7 +34,7 @@ export const createIssue = async (req: Request, res: Response): Promise<void> =>
         let issue: IIssue = await Issue.create({
             ...validatedIssue 
         })
-        issue = await issue.populate([{path: 'userId'}, {path: "archives"}])
+        issue = await issue.populate([{path: 'userId', populate: {path: 'avatar'}}, {path: "archives"}])
         res.status(201).json({message: "Issue created successfully", data: issue});
     } catch (error) {
         res.status(500).json({ error: error.message, message: 'Internal Server Error' });
@@ -44,7 +44,7 @@ export const createIssue = async (req: Request, res: Response): Promise<void> =>
 export const getIssueById = async (req: Request, res: Response): Promise<void> => {
     try {
         const { id } = req.params;
-        let issue = await Issue.findById(id).populate([{path: 'userId'}, {path: "archives"}]).lean().exec();
+        let issue = await Issue.findById(id).populate([{path: 'userId', populate: {path: 'avatar'}}, {path: "archives"}]).lean().exec();
         const user = await sendRequest(req, "get", "user");
         let isFavorite = await Fav.findOne({"userId": user._id, "issueId":id}).lean().exec()? true:false;
         
@@ -62,7 +62,7 @@ export const getIssueById = async (req: Request, res: Response): Promise<void> =
 export const getIssueByTag = async (req: Request, res: Response): Promise<void> => {
     try {
         const { tags } = req.body;
-        const issue = await Issue.find({ tags: { $in: tags } }).populate([{path: 'userId'}, {path: "archives"}]).exec();
+        const issue = await Issue.find({ tags: { $in: tags } }).populate([{path: 'userId', populate: {path: 'avatar'}}, {path: "archives"}]).exec();
         if (!issue) {
             res.status(404).json({ error: 'Issue not found', message: 'An Issue with the given tags doesn\'t exists'});
         } else {
@@ -83,7 +83,7 @@ export const updateIssueById = async (req: Request, res: Response): Promise<void
             id,
             { ...validatedIssue },
             { new: true }
-        ).populate([{path: 'userId'}, {path: "archives"}]).exec();
+        ).populate([{path: 'userId', populate: {path: 'avatar'}}, {path: "archives"}]).exec();
         if (!updatedIssue) {
             res.status(404).json({ error: 'Issue not found', message: 'An Issue with the given Id doesn\'t exists'});
         } else {
@@ -119,7 +119,7 @@ export const manageFavorite = async (req: Request, res: Response): Promise<void>
                 ...validatedFavorite
             });
             
-            n_favorite = await n_favorite.populate([{path: 'userId'}, {path: "issueId"}])
+            n_favorite = await n_favorite.populate([{path: 'userId', populate: {path: 'avatar'}}, {path: "issueId"}])
             res.status(201).json({message: "Issue added to favorite list successfully", data: n_favorite});
         }else{
             await Fav.findOneAndDelete({"userId": userId, "issueId":issueId});
@@ -133,7 +133,7 @@ export const manageFavorite = async (req: Request, res: Response): Promise<void>
 export const getFavoriteIssue = async (req: Request, res: Response): Promise<void> => {
     try {
         const { userId } = req.params;
-        const favorites = await Fav.find({ "userId": userId}).populate([{path: 'userId'}, {path: "issueId"}]).lean().exec();
+        const favorites = await Fav.find({ "userId": userId}).populate([{path: 'userId', populate: {path: 'avatar'}}, {path: "issueId"}]).lean().exec();
         if (!favorites) {
             res.status(404).json({ error: 'No favorite issue found', message: 'The user doesn\'t have any favorite issue'});
         } else {

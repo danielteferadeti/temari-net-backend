@@ -7,7 +7,7 @@ export const createVote = async (req: Request, res: Response): Promise<void> => 
         let vote: IVote = await Vote.create({
             userId, answerId, value
         })
-        vote = await vote.populate([{path: 'userId'}, {path: "answerId"}]);
+        vote = await vote.populate([{path: 'userId', populate: {path: 'avatar'}}, {path: "answerId"}]);
         res.status(201).json({message: "Vote created successfully", data: vote});
     } catch (error) {
         res.status(500).json({ error: error.message, message: 'Internal Server Error' });
@@ -17,7 +17,7 @@ export const createVote = async (req: Request, res: Response): Promise<void> => 
 export const getVoteById = async (req: Request, res: Response): Promise<void> => {
     try {
         const { id } = req.params
-        const vote: IVote | null = await Vote.findById(id).populate([{path: 'userId'}, {path: "answerId"}]);;
+        const vote: IVote | null = await Vote.findById(id).populate([{path: 'userId', populate: {path: 'avatar'}}, {path: "answerId"}]);;
 
         if (!vote) {
             res.status(404).json({ error: 'Vote not found', message: 'A Vote with the given Id doesn\'t exists'});
@@ -33,7 +33,7 @@ export const getVoteById = async (req: Request, res: Response): Promise<void> =>
 
 export const getAllVotes = async (req: Request, res: Response): Promise<void> => {
     try {
-        const votes: IVote[] | null = await Vote.find().populate([{path: 'userId'}, {path: "answerId"}]);
+        const votes: IVote[] | null = await Vote.find().populate([{path: 'userId', populate: {path: 'avatar'}}, {path: "answerId"}]);
 
         if (!votes) {
             res.status(404).json({ error: 'Vote not found', message: 'A Vote with the given Id doesn\'t exists'});
@@ -56,7 +56,7 @@ export const updateVote = async (req: Request, res: Response): Promise<void> => 
             id,
             { ...validatedVote },
             { new: true }
-        ).populate([{path: 'userId'}, {path: "answerId"}]);;
+        ).populate([{path: 'userId', populate: {path: 'avatar'}}, {path: "answerId"}]);;
         if (!updatedVote) {
             res.status(404).json({ error: 'Vote not found', message: 'A Vote with the given Id doesn\'t exists'});
         } else {
@@ -70,7 +70,7 @@ export const updateVote = async (req: Request, res: Response): Promise<void> => 
 export const deletVote = async (req: Request, res: Response): Promise<void> => {
     try {
         const { id } = req.params;
-        const deletedVote: IVote | null = await Vote.findByIdAndDelete(id).populate([{path: 'userId'}, {path: "answerId"}]);;
+        const deletedVote: IVote | null = await Vote.findByIdAndDelete(id).populate([{path: 'userId', populate: {path: 'avatar'}}, {path: "answerId"}]);;
         if (!deletedVote) {
             res.status(404).json({ error: 'Vote not found', message: 'A Vote with the given Id doesn\'t exists'});
         } else {
