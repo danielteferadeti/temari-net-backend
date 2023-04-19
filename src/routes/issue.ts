@@ -13,7 +13,7 @@ router.get('/:id', issueController.getIssueById);
 router.get("/favorite-issues/:userId", isAuthenticated, issueController.getFavoriteIssue)
 router.post('/manage-favorite', isAuthenticated, issueController.manageFavorite)
 router.post('/', isAuthenticated, multipleUpload, issueController.createIssue);
-router.put('/:id', isAuthenticated, multipleUpload, isAuthorized.isIssueOwner, issueController.updateIssueById);
-router.delete('/:id', isAuthenticated, isAuthorized.isIssueOwner, issueController.deleteIssueById);
+router.put('/:id', isAuthenticated, multipleUpload, issueController.updateIssueById);
+router.delete('/:id', isAuthenticated, issueController.deleteIssueById);
 
 export default router;
