@@ -80,7 +80,7 @@ export const getAnswerById = async (req: Request, res: Response, next: NextFunct
 export const getAnswerByIssueId = async (req: Request, res: Response): Promise<void> => {
   try {
       const { issueId } = req.params
-      const answers: IAnswer[] | null = await Answer.find({issueId: issueId});
+      const answers: IAnswer[] | null = await Answer.find({issueId: issueId}).populate([{path: 'userId', populate: {path: 'avatar'}}, {path: "issueId"}, {path: "archives"}])
 
       if (!answers) {
           res.status(404).json({ error: 'Answers not found', message: 'No Answer with the given answer Id'});
