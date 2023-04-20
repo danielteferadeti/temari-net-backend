@@ -4,10 +4,10 @@ import isAuthenticated from "../middlewares/authenticate"
 
 const route = express.Router()
 
-route.get('/', voteContollers.getAllVotes)
-route.get('/:id', voteContollers.getVoteById)
+route.get('/', isAuthenticated, voteContollers.getAllVotes)
+route.get('/:id', isAuthenticated, voteContollers.getVoteById)
 route.post('/', isAuthenticated, voteContollers.createVote)
-route.put('/:id', voteContollers.updateVote)
+route.put('/:id', isAuthenticated, voteContollers.updateVote)
 route.delete('/:id', isAuthenticated, voteContollers.deletVote)
 
 export default route
